@@ -1,13 +1,7 @@
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-if (!backendUrl) {
-  throw new Error(
-    'NEXT_PUBLIC_BACKEND_URL is missing. Set it to enable authentication.'
-  );
-}
-
 export default function LoginPage() {
-  const loginUrl = `${backendUrl}/auth/login`;
+  const loginUrl = backendUrl ? `${backendUrl}/auth/login` : null;
 
   return (
     <div className="page-shell">
@@ -23,9 +17,21 @@ export default function LoginPage() {
             Instagram.
           </p>
         </div>
-        <a className="btn" href={loginUrl}>
-          Login with Spotify
-        </a>
+        {loginUrl ? (
+          <a className="btn" href={loginUrl}>
+            Login with Spotify
+          </a>
+        ) : (
+          <div className="stack">
+            <p className="error">
+              Backend URL is not configured. Set NEXT_PUBLIC_BACKEND_URL in
+              .env.local to enable login.
+            </p>
+            <p className="muted">
+              You can still explore the UI, but API calls will be skipped.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

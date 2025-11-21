@@ -19,6 +19,11 @@ export default function GeneratePage() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+      setError('Backend URL is not configured. Set NEXT_PUBLIC_BACKEND_URL.');
+      return;
+    }
+
     if (!sessionToken) {
       setError('No session found. Please log in with Spotify again.');
       return;

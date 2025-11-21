@@ -17,9 +17,5 @@ export const clearSessionToken = () => {
   localStorage.removeItem(SESSION_TOKEN_KEY);
 };
 
-export const authHeaders = (token?: string) =>
-  token
-    ? {
-        Authorization: `Bearer ${token}`
-      }
-    : {};
+export const authHeaders = (token?: string): Record<string, string> =>
+  token ? { Authorization: `Bearer ${token}` } : {};

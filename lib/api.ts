@@ -1,12 +1,11 @@
 const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, '');
 
-if (!baseUrl) {
-  throw new Error(
-    'NEXT_PUBLIC_BACKEND_URL is not set. Please configure your environment.'
-  );
-}
-
 const buildUrl = (path: string) => {
+  if (!baseUrl) {
+    throw new Error(
+      'NEXT_PUBLIC_BACKEND_URL is not set. Please configure your environment.'
+    );
+  }
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return `${baseUrl}${normalizedPath}`;
 };

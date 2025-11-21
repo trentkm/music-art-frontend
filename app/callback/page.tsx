@@ -18,6 +18,11 @@ export default function CallbackPage() {
       return;
     }
 
+    if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+      setError('Backend URL is not configured. Set NEXT_PUBLIC_BACKEND_URL.');
+      return;
+    }
+
     const exchange = async () => {
       try {
         setError(null);
