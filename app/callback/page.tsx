@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Loader from '../../components/Loader';
 import { apiPost } from '../../lib/api';
 import { storeSessionToken } from '../api/client';
 
-export default function CallbackPage() {
+function CallbackContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -61,5 +61,24 @@ export default function CallbackPage() {
         ) : null}
       </div>
     </div>
+  );
+}
+
+export default function CallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="page-shell">
+          <div className="card stack" style={{ textAlign: 'center' }}>
+            <Loader label="Finalizing your login..." />
+            <p className="muted">
+              Completing Spotify authentication and preparing your session.
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <CallbackContent />
+    </Suspense>
   );
 }
