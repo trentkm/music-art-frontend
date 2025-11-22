@@ -46,11 +46,18 @@ export default function GeneratePage() {
 
         setStatus('processing');
 
-        const response = await apiPost(
-          '/image/generate',
-          { imageUrls },
-          { headers: authHeaders(sessionToken) }
-        );
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_GENERATE_URL!,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...authHeaders(sessionToken)
+            },
+            body: JSON.stringify({ imageUrls })
+          }
+        ).then(r => r.json());
+
 
         const finalUrl = response?.url || response?.imageUrl;
         if (!finalUrl) {
