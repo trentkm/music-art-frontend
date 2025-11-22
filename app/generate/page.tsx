@@ -1,98 +1,84 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ImageDisplay from '../../components/ImageDisplay';
 import Loader from '../../components/Loader';
 import { apiGet, apiPost } from '../../lib/api';
 import { authHeaders, getSessionToken } from '../api/client';
 
-type GenerationStatus = 'idle' | 'starting' | 'processing' | 'completed' | 'failed';
+type GenerationStatus = 'idle' | 'fetching-art' | 'starting' | 'processing' | 'completed' | 'failed';
 
 export default function GeneratePage() {
   const [status, setStatus] = useState<GenerationStatus>('idle');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [requestId, setRequestId] = useState<string | null>(null);
-  const [galleryId, setGalleryId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const pollTimeout = useRef<NodeJS.Timeout | null>(null);
   const sessionToken = getSessionToken();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
-      setError('Backend URL is not configured. Set NEXT_PUBLIC_BACKEND_URL.');
-      return;
-    }
+    let cancelled = false;
 
-    if (!sessionToken) {
-      setError('No session found. Please log in with Spotify again.');
-      return;
-    }
+    const start = async () => {
+      if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+        setError('Backend URL is not configured. Set NEXT_PUBLIC_BACKEND_URL.');
+        return;
+      }
 
-    const startGeneration = async () => {
+      if (!sessionToken) {
+        setError('No session found. Please log in with Spotify again.');
+        return;
+      }
+
       try {
-        setStatus('starting');
-        const response = await apiPost('/image/generate', undefined, {
+        setError(null);
+        setStatus('fetching-art');
+
+        const topArt = await apiGet('/spotify/top-art', {
           headers: authHeaders(sessionToken)
         });
-        const newRequestId = response?.requestId || response?.id;
-        if (!newRequestId) {
-          throw new Error('No request id returned from backend.');
-        }
-        setRequestId(newRequestId);
-        pollGeneration(newRequestId);
-      } catch (err) {
-        setStatus('failed');
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Failed to start generation. Please try again.'
-        );
-      }
-    };
 
-    const pollGeneration = async (id: string) => {
-      try {
+        const imageUrls: string[] = (topArt?.images || topArt || [])
+          .map((item: any) => item?.imageUrl || item?.url)
+          .filter(Boolean);
+
+        if (!imageUrls.length) {
+          throw new Error('No album art found to blend. Try listening to more music on Spotify.');
+        }
+
         setStatus('processing');
-        const response = await apiGet(`/image/status?requestId=${id}`, {
-          headers: authHeaders(sessionToken)
-        });
 
-        if (response.status === 'completed' || response.status === 'done') {
-          setStatus('completed');
-          setImageUrl(response.imageUrl || response.url);
-          setGalleryId(response.galleryId || response.id || id);
-          return;
-        }
-
-        if (response.status === 'failed') {
-          setStatus('failed');
-          setError('Generation failed. Please try again.');
-          return;
-        }
-
-        pollTimeout.current = setTimeout(() => pollGeneration(id), 2000);
-      } catch (err) {
-        setStatus('failed');
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Something went wrong while checking status.'
+        const response = await apiPost(
+          '/image/generate',
+          { imageUrls },
+          { headers: authHeaders(sessionToken) }
         );
+
+        const finalUrl = response?.url || response?.imageUrl;
+        if (!finalUrl) {
+          throw new Error('No image URL returned from backend.');
+        }
+
+        if (!cancelled) {
+          setImageUrl(finalUrl);
+          setStatus('completed');
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setStatus('failed');
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Failed to generate image. Please try again.'
+          );
+        }
       }
     };
 
-    startGeneration();
+    start();
 
     return () => {
-      if (pollTimeout.current) {
-        clearTimeout(pollTimeout.current);
-      }
+      cancelled = true;
     };
   }, [sessionToken]);
-
-  const shareUrl =
-    galleryId && appUrl ? `${appUrl}/gallery/${galleryId}` : undefined;
 
   return (
     <div className="page-shell">
@@ -108,12 +94,12 @@ export default function GeneratePage() {
           </p>
         </div>
 
-        {(status === 'starting' || status === 'processing' || status === 'idle') && (
+        {(status === 'fetching-art' || status === 'starting' || status === 'processing' || status === 'idle') && (
           <Loader
             label={
-              status === 'processing'
-                ? 'Generating...'
-                : 'Preparing your blend...'
+              status === 'fetching-art'
+                ? 'Loading your top album art...'
+                : 'Generating...'
             }
           />
         )}
@@ -125,16 +111,6 @@ export default function GeneratePage() {
               description="Square export, perfect for sharing."
               downloadName="music-artwork"
             />
-            {galleryId ? (
-              <a className="btn" href={`/gallery/${galleryId}`}>
-                View public page
-              </a>
-            ) : null}
-            {shareUrl ? (
-              <p className="muted" style={{ textAlign: 'center' }}>
-                Shareable link: <a href={shareUrl}>{shareUrl}</a>
-              </p>
-            ) : null}
           </div>
         ) : null}
 
