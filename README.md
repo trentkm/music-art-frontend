@@ -23,6 +23,7 @@ Next.js 14 frontend for generating and sharing blended album art using a Spotify
 | Name | Description |
 | --- | --- |
 | `NEXT_PUBLIC_BACKEND_URL` | Base URL for the backend API (e.g. https://api.example.com). |
+| `NEXT_PUBLIC_GENERATE_URL` | Direct endpoint that accepts `{ imageUrls: string[] }` and returns the blended artwork payload. |
 | `NEXT_PUBLIC_APP_URL` | Public URL for this frontend (used when showing share links). |
 
 All client requests to the backend are routed through the helper in `lib/api.ts`, which prefixes the backend URL automatically.
@@ -31,7 +32,7 @@ All client requests to the backend are routed through the helper in `lib/api.ts`
 
 - `/login` sends users to `${NEXT_PUBLIC_BACKEND_URL}/auth/login`.
 - `/callback` receives `code` and exchanges it via `POST ${NEXT_PUBLIC_BACKEND_URL}/auth/exchange`. The returned session token is stored in local storage.
-- `/generate` triggers `POST /image/generate` and polls `/image/status?requestId=...` until a completed response with an `imageUrl`.
+- `/generate` collects your top art via `/spotify/top-art`, then posts those image URLs to `NEXT_PUBLIC_GENERATE_URL` (default `/image/generate`) until a completed response returns an `imageUrl`.
 - `/gallery/[id]` fetches public artwork via `GET /image/:id`.
 
 If your backend uses different field names, adjust the mapping in `app/callback/page.tsx` and `app/generate/page.tsx`.
@@ -40,7 +41,7 @@ If your backend uses different field names, adjust the mapping in `app/callback/
 
 1. Push this repository to GitHub.
 2. Create a new Vercel project and import the repo.
-3. Add the two environment variables (`NEXT_PUBLIC_BACKEND_URL`, `NEXT_PUBLIC_APP_URL`) in the Vercel dashboard.
+3. Add the environment variables (`NEXT_PUBLIC_BACKEND_URL`, `NEXT_PUBLIC_GENERATE_URL`, `NEXT_PUBLIC_APP_URL`) in the Vercel dashboard.
 4. Deploy. The app router pages are production-ready and the share links will use `NEXT_PUBLIC_APP_URL`.
 
 ## Project Structure
