@@ -121,8 +121,8 @@ export default function TopArtShowcase({ items, progress }: TopArtShowcaseProps)
 
   return (
     <Card className="relative overflow-hidden border-white/10 bg-gradient-to-b from-white/10 via-white/5 to-white/5 p-0">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(79,70,229,0.4),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.25),transparent_40%)]" />
-      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-400/20 blur-3xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(140,169,255,0.25),transparent_45%),radial-gradient(circle_at_85%_0%,rgba(214,184,255,0.22),transparent_40%)]" />
+      <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#8ca9ff]/25 blur-3xl" />
       <div className="relative z-10 space-y-4 p-6">
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-1">
@@ -143,7 +143,7 @@ export default function TopArtShowcase({ items, progress }: TopArtShowcaseProps)
               ETA
             </span>
             <div className="flex items-center gap-1 font-semibold text-white">
-              <Timer className="h-3.5 w-3.5 text-emerald-300" />
+              <Timer className="h-3.5 w-3.5 text-[#b6c7ff]" />
               ~{etaSeconds}s
             </div>
           </div>

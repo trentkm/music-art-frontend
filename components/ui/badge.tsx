@@ -4,11 +4,11 @@ import { cn } from '../../lib/utils';
 
 const badgeVariants = {
   default:
-    'bg-gradient-to-r from-emerald-400/90 to-emerald-500/90 text-emerald-950 shadow-[0_0_35px_rgba(52,211,153,0.45)]',
+    'bg-gradient-to-r from-[#8ca9ff] via-[#b9a9ff] to-[#d6b8ff] text-[#0f1324] shadow-[0_0_25px_rgba(147,165,255,0.35)]',
   outline:
-    'border border-white/20 bg-white/5 text-white backdrop-blur-2xl shadow-[0_20px_45px_rgba(0,0,0,0.45)]',
+    'border border-white/18 bg-white/6 text-white backdrop-blur-2xl shadow-[0_18px_40px_rgba(0,0,0,0.45)]',
   pulse:
-    'bg-white/5 text-white border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.25)] animate-glow'
+    'bg-white/8 text-white border border-white/12 shadow-[0_0_30px_rgba(184,199,255,0.35)] animate-glow'
 };
 
 export type BadgeVariant = keyof typeof badgeVariants;

@@ -20,7 +20,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
       {...props}
     >
       <div
-        className="h-full w-full rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-sky-300 transition-all"
+        className="h-full w-full rounded-full bg-gradient-to-r from-[#8ca9ff] via-[#b2a4ff] to-[#d6b8ff] transition-all"
         style={{ transform: `translateX(-${100 - Math.min(100, value)}%)` }}
       />
     </div>
