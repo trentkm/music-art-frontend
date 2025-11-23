@@ -29,8 +29,8 @@ const formatDate = (value?: string) => {
 };
 
 const AlbumCard = ({ item }: { item: TopArtItem }) => (
-  <div className="flex min-w-[180px] items-center gap-3 rounded-2xl border border-white/12 bg-white/5 p-3 shadow-[0_12px_30px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
-    <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-white/15">
+  <div className="flex w-[210px] min-w-[210px] max-w-[210px] items-center gap-3 overflow-hidden rounded-2xl border border-white/12 bg-white/5 p-3 shadow-[0_12px_30px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-white/15">
       {item.imageUrl ? (
         <Image
           src={item.imageUrl}
@@ -43,11 +43,11 @@ const AlbumCard = ({ item }: { item: TopArtItem }) => (
         <div className="h-full w-full bg-gradient-to-br from-slate-800 to-slate-900" />
       )}
     </div>
-    <div className="flex flex-col">
-      <p className="text-sm font-semibold text-white truncate">
+    <div className="flex min-w-0 flex-col">
+      <p className="truncate text-sm font-semibold leading-tight text-white">
         {item.albumName ?? 'Unknown Record'}
       </p>
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+      <p className="truncate text-xs uppercase tracking-wide text-muted-foreground">
         {item.artistName ?? 'Unknown Artist'}
       </p>
       {item.releasedAt ? (
